@@ -1,11 +1,15 @@
 package br.com.case
 
-import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 
 @SpringBootApplication
 class Application
 
 fun main(args: Array<String>) {
-    SpringApplication.run(Application::class.java, *args)
+    runApplication<Application> {
+        if (args.isNotEmpty() && args[0] == "migrate") {
+            this.setAdditionalProfiles("dbmigration")
+        }
+    }
 }

@@ -1,93 +1,75 @@
 buildscript {
-    ext {
-        kotlinVersion = '1.3.61'
-        springBootVersion = '2.2.2.RELEASE'
-        dependencyManagementPlugin = '1.0.8.RELEASE'
-        springCloudVersion = 'Hoxton.SR1'
-        jacksonModuleKotlin = '2.10.3'
-        mysqlConnector = '8.0.18'
-        jupiter = '5.5.2'
-        mockito = '2.2.0'
-        h2Database = '1.4.199'
-        gson = '2.8.5'
-
-        repos = {
-            mavenCentral()
-            jcenter()
-            maven {
-                    url = uri("http://packages.confluent.io/maven/")
-            }
-        }
+    repositories {
+        mavenCentral()
     }
-
-    repositories repos
-
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "io.spring.gradle:dependency-management-plugin:${dependencyManagementPlugin}"
     }
 }
 
-allprojects {
+plugins {
+    id "org.jetbrains.kotlin.jvm"            version "${kotlinVersion}"
+    id "org.jetbrains.kotlin.plugin.spring"  version "${kotlinVersion}"
+    id "org.jetbrains.kotlin.plugin.allopen" version "${kotlinVersion}"
+    id "org.springframework.boot"            version "${springBootVersion}"
+    id "io.spring.dependency-management"     version "${dependencyManagementVersion}"
+    id "io.gitlab.arturbosch.detekt"         version "${detektVersion}"
+}
 
-    version = '1.0.0-REALEASE'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'kotlin'
+apply plugin: 'java'
+apply plugin: "io.gitlab.arturbosch.detekt"
 
-    apply plugin: "io.spring.dependency-management"
-    apply plugin: 'idea'
-    apply plugin: "kotlin"
-    apply plugin: "kotlin-spring"
-    apply plugin: "kotlin-jpa"
-    apply plugin: 'org.jetbrains.kotlin.jvm'
+java.sourceCompatibility = JavaVersion.VERSION_1_8
 
-    repositories repos
+// Separando dependencias para outro arquivo.
+apply from: 'dependencies.gradle'
 
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+    mavenLocal()
+}
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs += "-Xjsr305=strict"
+        jvmTarget = "1.8"
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs += "-Xjsr305=strict"
+        jvmTarget = "1.8"
+    }
+}
+
+test {
+    useJUnitPlatform()
+    ignoreFailures = false
+    jvmArgs = ["-Duser.timezone=America/Sao_Paulo",
+               "-XX:+UnlockExperimentalVMOptions",
+               "-XX:+UseCGroupMemoryLimitForHeap"]
+}
+
+sourceSets {
+    main {
+        java.srcDir("src/main/kotlin")
+    }
     test {
-        useJUnitPlatform()
-    }
-
-    task integrationTest(type: Test) {
-        testClassesDirs = sourceSets.test.output.classesDirs
-        classpath = sourceSets.test.runtimeClasspath
-    }
-
-    dependencies {
-        dependencies {
-
-            implementation(
-                    "org.jetbrains.kotlin:kotlin-reflect",
-                    "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
-                    "org.springframework.boot:spring-boot-starter-web",
-                    "org.springframework.boot:spring-boot-starter-data-jpa",
-                    "org.springframework.boot:spring-boot",
-                    "org.springframework.boot:spring-boot-autoconfigure",
-                    "com.nhaarman.mockitokotlin2:mockito-kotlin:${mockito}",
-                    "org.junit.jupiter:junit-jupiter-api:${jupiter}",
-                    "org.junit.jupiter:junit-jupiter-params:${jupiter}",
-                    "org.junit.jupiter:junit-jupiter-engine:${jupiter}"
-            )
-
-            testImplementation(
-                    "org.springframework.boot:spring-boot-test",
-                    "org.springframework.boot:spring-boot-starter-test",
-            )
-
-            runtimeOnly(
-                    "org.springframework.boot:spring-boot-devtools",
-                    "com.h2database:h2"
-            )
-        }
-    }
-
-    dependencyManagement {
-        imports {
-            mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") {
-                bomProperty("kotlin.version", "${kotlinVersion}")
-            }
-
-            mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
-        }
+        java.srcDir("src/test/kotlin")
     }
 }
+
+detekt {
+    toolVersion = detektVersion
+    config = files("$projectDir/config/detekt.yml")
+    autoCorrect = true
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
