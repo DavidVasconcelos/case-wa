@@ -1,5 +1,6 @@
-package br.com.case
+package br.com.wa.api.controller
 
+import br.com.wa.api.domain.model.User
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController("users")
-class Main {
+class UserController {
 
     @GetMapping("/{id}")
     fun get(@PathVariable("id") id: Int): User {
