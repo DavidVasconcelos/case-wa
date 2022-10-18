@@ -10,10 +10,28 @@ import java.util.UUID
 class MockTest {
 
     fun getMockUser() = User().apply {
-        id = (1..1000).random().toLong()
+        id = (1..999).random().toLong()
         identificador = UUID.randomUUID().toString()
-        nome = "John Doe"
-        documento = "999.999.999-99"
+        nome = "John Doe $id"
+        documento = "$id.999.999-99"
+        dataCriacao = LocalDateTime.now().toStringPattern()
+        dataAtualizacao = LocalDateTime.now().toStringPattern()
+    }
+
+    fun getMockUserWithoutName() = User().apply {
+        id = (1..999).random().toLong()
+        identificador = UUID.randomUUID().toString()
+        nome = ""
+        documento = "$id.999.999-99"
+        dataCriacao = LocalDateTime.now().toStringPattern()
+        dataAtualizacao = LocalDateTime.now().toStringPattern()
+    }
+
+    fun getMockUserWithoutDocument() = User().apply {
+        id = (1..999).random().toLong()
+        identificador = UUID.randomUUID().toString()
+        nome = "John Doe $id"
+        documento = ""
         dataCriacao = LocalDateTime.now().toStringPattern()
         dataAtualizacao = LocalDateTime.now().toStringPattern()
     }
