@@ -3,7 +3,6 @@ package br.com.wa.api.domain.model
 import br.com.wa.api.domain.entity.UserEntity
 import br.com.wa.api.extension.toStringPattern
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class User(
@@ -22,5 +21,4 @@ data class User(
         this.dataCriacao = entity.dataCriacao?.toStringPattern()
         this.dataAtualizacao = entity.dataAtualizacao?.toStringPattern()
     }
-
 }

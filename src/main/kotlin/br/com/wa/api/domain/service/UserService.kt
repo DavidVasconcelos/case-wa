@@ -41,6 +41,7 @@ class UserService(val repository: UserRepository) {
             val savedEntity = repository.save(entity)
             return User(savedEntity)
         } catch (ex: ConstraintViolationException) {
+            logger.warn(ex.message)
             throw BusinessValidationException("Usuário inválido")
         }
     }

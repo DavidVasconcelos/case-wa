@@ -39,7 +39,8 @@ class UserController(val service: UserService) {
 
     @PutMapping("/{id}")
     fun update(@PathVariable("id") id: Long, @RequestBody user: User): ResponseEntity<Any> {
-        service.updateUser(id,user)
+        logger.info("Atualizando usuário: {}", user)
+        service.updateUser(id, user)
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
