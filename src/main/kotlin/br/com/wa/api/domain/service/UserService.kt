@@ -27,32 +27,38 @@ class UserService(val repository: UserRepository) {
     }
 
     fun saveUser(user: User): User {
+        validateUser(user)
+        val entity = UserEntity(
+            identificador = UUID.randomUUID().toString(),
+            nome = user.nome,
+            documento = user.documento,
+            dataCriacao = LocalDateTime.now()
+        )
+        val savedEntity = repository.save(entity)
+        return User(savedEntity)
+    }
+
+    fun updateUser(id: Long, user: User) {
+        validateUser(user)
+        val savedUser = findById(id)
+        savedUser.nome = user.nome
+        savedUser.documento = user.documento
+        savedUser.dataAtualizacao = LocalDateTime.now()
+        repository.save(savedUser)
+        logger.info("Usuário com identificador ${savedUser.identificador} atualizado com suscesso")
+    }
+
+    private fun findById(id: Long) = repository.findById(id).unwrap() ?: throw NotFoundException("User not found")
+
+    private fun validateUser(user: User) {
         try {
             validate(user) {
                 validate(User::nome).isNotEmpty()
                 validate(User::documento).isNotEmpty()
             }
-            val entity = UserEntity(
-                identificador = UUID.randomUUID().toString(),
-                nome = user.nome,
-                documento = user.documento,
-                dataCriacao = LocalDateTime.now()
-            )
-            val savedEntity = repository.save(entity)
-            return User(savedEntity)
         } catch (ex: ConstraintViolationException) {
             logger.warn(ex.message)
-            throw BusinessValidationException("Usuário inválido")
+            throw BusinessValidationException("Invalid user")
         }
     }
-
-    fun updateUser(id: Long, user: User) {
-        var savedUser = findById(id)
-        savedUser.nome = user.nome
-        savedUser.documento = user.documento
-        savedUser.dataAtualizacao = LocalDateTime.now()
-        repository.save(savedUser)
-    }
-
-    private fun findById(id: Long) = repository.findById(id).unwrap() ?: throw NotFoundException("User not found")
 }
