@@ -23,3 +23,6 @@
     - Documento
     - Data de criação
     - Data de atualização
+
+### Swagger
+http://localhost:8080/swagger-ui/index.html

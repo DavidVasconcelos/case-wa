@@ -1,6 +1,7 @@
 def gsonVersion= '2.9.0'
 def ninjaSquadVersion= '3.1.1'
 def jacksonVersion= '2.13.4'
+def valiktorVersion          = '0.12.0'
 def openApiVersion= "1.6.12"
 def jsonAssertVersion= '1.5.1'
 def kluentVersion= '1.68'
@@ -31,6 +32,9 @@ dependencies {
 
     //Jackson
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}"
+
+    //Valiktor
+    implementation "org.valiktor:valiktor-core:${valiktorVersion}"
 
     //OpenApi
     implementation "org.springdoc:springdoc-openapi-ui:$openApiVersion"
