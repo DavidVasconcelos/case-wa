@@ -32,6 +32,14 @@ repositories {
     mavenLocal()
 }
 
+jar {
+    enabled = false
+}
+
+bootJar {
+    launchScript()
+}
+
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"

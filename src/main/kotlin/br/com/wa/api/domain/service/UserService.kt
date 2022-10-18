@@ -57,7 +57,8 @@ class UserService(val repository: UserRepository) {
                 validate(User::documento).isNotEmpty()
             }
         } catch (ex: ConstraintViolationException) {
-            logger.warn(ex.message)
+            logger.warn(
+                ex.constraintViolations.toList().joinToString { "property: ${it.property}, value: (${it.value})" })
             throw BusinessValidationException("Invalid user")
         }
     }
