@@ -26,9 +26,12 @@
 
 ### Docker 
 
-> $ docker image build -t wa/case .
-
-> $ docker container run -d --name case -p 8080:8080 wa/case
+```
+$ docker image build -t wa/case .
+```
+```
+$ docker container run -d --name case -p 8080:8080 wa/case
+```
 
  ### Swagger
 http://localhost:8080/swagger-ui/index.html
